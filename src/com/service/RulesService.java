@@ -1,55 +1,43 @@
 package com.service;
 
-import java.util.Map;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.dao.RulesDao;
 
-public class RulesService implements IService{
+public class RulesService {
 
-	private static RulesDao ru=new RulesDao();
-	
-	public String execute(Map<String, String> params) {
+	private static RulesDao ru = new RulesDao();
 
-		String method=params.get("method");
-		if(method.equals("getAllTitle")){
+	public String execute(String method, JSONObject param) {
+
+		if (method.equals("getAllTitle")) {
 			return ru.getAllTitle().toString();
-		}else if(method.equals("getOne")){
-			
+		} else if (method.equals("getOne")) {
 			try {
-				JSONObject pj=new JSONObject(params.get("params"));
-				if(pj.has("id")){
-				return ru.getOne(pj.getString("id")).toString();
+				if (param.has("rules_id")) {
+					return ru.getOne(param.getString("rules_id")).toString();
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}else if(method.equals("insert")){
-			
-			String param=params.get("params");
-			try {
-				JSONObject jo=new JSONObject(param);
-				ru.insertOne(jo);
-				return "ok";
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}else if(method.equals("deleteOne")){
-			String param=params.get("params");
-			if(param!=null){
-				return ru.deleteOne(param);
+		} else if (method.equals("insert")) {
+			ru.insertOne(param);
+			return "ok";
+		} else if (method.equals("deleteOne")) {
+			if (param != null) {
+				if (param.has("rules_id")) {
+					try {
+						return ru.deleteOne(param.getString("rules_id"));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
-		
-		return "无可执行方法";
-	}
 
-	public String getType() {
-		return IService.SERVICE_RULE;
+		return "无可执行方法";
 	}
 
 }
