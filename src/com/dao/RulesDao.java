@@ -122,4 +122,29 @@ public class RulesDao extends BaseDao {
 		}
 		return "error";
 	}
+
+	// 根据clsid查询多条记录
+	public JSONArray getAllByClsId(String clsid) {
+		Connection con = null;
+		Statement sta = null;
+		ResultSet rs = null;
+		JSONArray ja = new JSONArray();
+		try {
+			con = getCon("oth");
+			sta = con.createStatement();
+			rs = sta.executeQuery("select * from rules where clsid='" + clsid + "'");
+			while (rs.next()) {
+				JSONObject jo = new JSONObject();
+				jo.put("rules_id", rs.getString("rules_id"));
+				jo.put("name", rs.getString("name"));
+				ja.put(jo);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeCon(con, sta, null, rs);
+		}
+		return ja;
+	}
+
 }
